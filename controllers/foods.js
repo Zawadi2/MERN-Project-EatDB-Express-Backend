@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Food = require('../models/food');
 
-
 // Create a new food
 router.post('/', async (req, res) => {
   try {
@@ -12,7 +11,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
-
 
 // Get all foods
 router.get('/', async (req, res) => {
