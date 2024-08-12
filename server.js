@@ -19,7 +19,7 @@ app.use('/users', userRouter)
 app.use('/restaurants', restaurantRouter);
 app.use('/foods', foodRouter);
 
-// Routes go here
+
 
 app.listen(3000, () => {
   console.log('The express app is ready!');
