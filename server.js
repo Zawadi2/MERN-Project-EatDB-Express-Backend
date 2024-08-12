@@ -14,12 +14,13 @@ mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
+// Routes go here
 app.use(express.json());
 app.use('/users', userRouter)
 app.use('/restaurants', restaurantRouter);
 app.use('/foods', foodRouter);
 
-// Routes go here
+
 
 app.listen(3000, () => {
   console.log('The express app is ready!');
