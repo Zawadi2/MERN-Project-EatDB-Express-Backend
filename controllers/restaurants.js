@@ -63,6 +63,7 @@ router.put('/:restaurantId', async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 // Delete a restaurant
 router.delete('/:restaurantId', async (req, res) => {
   try {
