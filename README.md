@@ -1,1 +1,1 @@
-# MERN-Project-EatDB-Express-Backend
+# EatDB-group-project
