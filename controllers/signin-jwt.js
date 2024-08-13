@@ -17,6 +17,7 @@ router.get('/sign-token', (req, res) => {
     res.json({ token }); 
 });
 
+
 // router.post('/verify-token', (req, res) => {
 //     try {
 //         console.log(req.header.authorization)
