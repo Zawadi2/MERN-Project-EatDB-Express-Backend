@@ -9,7 +9,10 @@ const restaurantSchema = new mongoose.Schema({
    category: String,
    rating: Number,
    review:String,
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
    foodList:[foodSchema]
 });
 
-module.exports = restaurantSchema;
+
+module.exports = mongoose.model('Restaurant', restaurantSchema);

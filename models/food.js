@@ -11,6 +11,4 @@ const foodSchema = new mongoose.Schema({
    price:String
 });  
 
-
-
 module.exports = foodSchema
