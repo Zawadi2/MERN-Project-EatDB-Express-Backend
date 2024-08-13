@@ -1,58 +1,68 @@
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
-const User = require('../models/user');
+// const User = require('../models/user');
+const Restaurant = require('../models/restaurant');
 const router = express.Router();
 
 router.use(verifyToken);
 
-// work on my git post. more 
 // Create a new restaurant
+
 router.post('/', async (req, res) => {
   try {
-    
-    const user = User.findById(req.user._id)
-    console.log(req.user._id)
-    user.restaurant.push(req.body)
-    await user.save()
-    // const restaurant = await Restaurant.create(req.body);
-    // restaurant._doc.author = req.user;
-    res.status(201).json({ message: 'Restaurant created successfully', restaurant });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ message: e.message });
+    console.log('Request body:', req.body);
+    req.body.author = req.user._id;
+    const restaurant = await Restaurant.create(req.body);
+    console.log('Created restaurant:', restaurant);
+    res.status(201).json(restaurant);
+  } catch (error) {
+    console.error('Error creating restaurant:', error);
+    res.status(500).json({ message: error.message });
   }
 });
 
+
 // Get all restaurants
+
 router.get('/', async (req, res) => {
   try {
-    const restaurants = await Restaurant.find();
-    res.status(200).json({ restaurants });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurants = await Restaurant.find({}).populate('author').sort({ createdAt: 'desc' });
+    console.log('Query results:', restaurants);
+    res.status(200).json(restaurants);
+  } catch (error) {
+    console.error('Error fetching restaurants:', error);
+    res.status(500).json(error);
   }
 });
 
 // Get a single restaurant by ID
-router.get('/:Id', async (req, res) => {
+router.get('/:restaurantId', async (req, res) => {
   try {
-    const restaurant = await Restaurant.findById(req.params.restaurantId);
-      res.status(404).json({ message: 'Restaurant not found' });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurant = await Restaurant.findById(req.params.restaurantId).populate('author');
+    res.status(200).json(restaurant);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
 // Update a restaurant
 router.put('/:restaurantId', async (req, res) => {
   try {
-    const updatedRestaurant = await Restaurant.findByIdAndUpdate(req.params.restaurantId, req.body, { new: true });
-      res.status(200).json({ message: 'Restaurant updated successfully', updatedRestaurant });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    if (!restaurant.author.equals(req.user._id)) {
+      return res.status(403).send("You're not allowed to do that!");
+    }
+    const updatedRestaurant = await restaurant.findByIdAndUpdate(
+      req.params.restaurantId,
+      req.body,
+      { new: true }
+    );
+    updatedRestaurant._doc.author = req.user;
+    res.status(200).json(updatedRestaurant);
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
-
 // Delete a restaurant
 router.delete('/:restaurantId', async (req, res) => {
   try {
