@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { restaurantSchema } = require('./restaurant');
+const restaurantSchema = require('./restaurant');
 
 
 const userSchema = new mongoose.Schema({
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    password: {
+    hashedPassword: {
       type: String,
       required: true,
     },

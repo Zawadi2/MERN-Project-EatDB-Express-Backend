@@ -11,6 +11,6 @@ const foodSchema = new mongoose.Schema({
    price:String
 });  
 
-const Food = mongoose.model("Food", foodSchema);
 
-module.exports = {Food, foodSchema}
+
+module.exports = foodSchema

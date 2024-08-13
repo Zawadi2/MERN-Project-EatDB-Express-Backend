@@ -1,15 +1,24 @@
 const express = require('express');
+const verifyToken = require('../middleware/verify-token.js');
+const User = require('../models/user');
 const router = express.Router();
-const Restaurant = require('../models/restaurant');
 
+router.use(verifyToken);
 
 // Create a new restaurant
 router.post('/', async (req, res) => {
   try {
-    const newRestaurant = await Restaurant.create(req.body);
-    res.status(201).json({ message: 'Restaurant created successfully', newRestaurant });
+    
+    const user = User.findById(req.user._id)
+    console.log(req.user._id)
+    user.restaurant.push(req.body)
+    await user.save()
+    // const restaurant = await Restaurant.create(req.body);
+    // restaurant._doc.author = req.user;
+    res.status(201).json({ message: 'Restaurant created successfully', restaurant });
   } catch (e) {
-    res.status(400).json({ message: e.message });
+    console.log(e);
+    res.status(500).json({ message: e.message });
   }
 });
 
@@ -52,5 +61,6 @@ router.delete('/:restaurantId', async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
+
 
 module.exports = router;

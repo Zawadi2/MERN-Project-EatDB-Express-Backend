@@ -1,66 +1,49 @@
 const express = require('express')
 const router = express.Router()
+const bcrypt = require('bcrypt');
 const User = require('../models/user')
+const jwt = require('jsonwebtoken');
 
 
-// Creat a new restaurant
-router.post('/', async (req, res) => {
-    try {
-      const user = await User.create(req.body);
-      res.status(201).json({ user });
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  });
+const SALT_LENGTH = 12;
 
-// Get all restaurants
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find()
-        res.status(200).json({ users})
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
+router.post('/signup', async (req, res) => {
+  try {
+      const userInDatabase = await User.findOne({ username: req.body.username })
+      if (userInDatabase) {
+          return res.status(400).json({ error: 'Auth failed' })
+      }
+      const user = await User.create({
+          username: req.body.username,
+          hashedPassword: bcrypt.hashSync(req.body.password, SALT_LENGTH)
+      })
+      const token = jwt.sign(
+          { username: user.username, _id: user._id },
+          process.env.JWT_SECRET
+        );
+      res.status(201).json({ user, token})
+  } catch (error) {
+      res.status(400).json({ message: error.message })
+  }
 })
 
-// Get a single User by ID
-router.get('/:id', async (req, res) => {
-    try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        res.status(404).json({ message: 'Track not found' });
-      } else {
-        res.status(200).json(user);
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  });
 
-//update a specific User
-router.put('/:userId', async (req, res) => {
+router.post('/signin', async (req, res) => {
   try {
-    const userUpdated = await User.findByIdAndUpdate(req.params.userId, {
-      $set: {
-        username: req.body.username,
-        password: req.body.password,
-        restaurant: req.body.restaurant
-      }
-    }) 
-    res.json({ message: "Successfully updated user.", userUpdated });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const user = await User.findOne({ username: req.body.username });
+    if (user && bcrypt.compareSync(req.body.password, user.hashedPassword)) {
+      const token = jwt.sign(
+        { username: user.username, _id: user._id },
+        process.env.JWT_SECRET
+      );
+      res.status(200).json({ token });
+    } else {
+      res.status(401).json({ error: 'Invalid username or password.' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 
-//delete 
-router.delete('/:userId', async (req, res) => {
-    try {
-        const deletedUser= await User.findByIdAndDelete(req.params.userId);
-        res.status(200).json({ message: 'Successfully deleted user.', deletedUser})
-    } catch (e) {
-        res.status(500).json({ message: e.message });
-    }
-})
 
 module.exports = router;

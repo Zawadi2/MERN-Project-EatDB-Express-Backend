@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {foodSchema }= require('./food');
+const foodSchema = require('./food');
 
 const restaurantSchema = new mongoose.Schema({
    name: {
@@ -10,7 +10,6 @@ const restaurantSchema = new mongoose.Schema({
    rating: Number,
    review:String,
    foodList:[foodSchema]
-}); 
-const Restaurant = mongoose.model("Restaurant", restaurantSchema);
+});
 
-module.exports = {Restaurant, restaurantSchema}
+module.exports = restaurantSchema;
