@@ -1,6 +1,5 @@
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
-// const User = require('../models/user');
 const Restaurant = require('../models/restaurant');
 const router = express.Router();
 
@@ -49,10 +48,11 @@ router.get('/:restaurantId', async (req, res) => {
 router.put('/:restaurantId', async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.restaurantId);
+    console.log(restaurant)
     if (!restaurant.author.equals(req.user._id)) {
       return res.status(403).send("You're not allowed to do that!");
     }
-    const updatedRestaurant = await restaurant.findByIdAndUpdate(
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       req.params.restaurantId,
       req.body,
       { new: true }
@@ -60,13 +60,16 @@ router.put('/:restaurantId', async (req, res) => {
     updatedRestaurant._doc.author = req.user;
     res.status(200).json(updatedRestaurant);
   } catch (error) {
+    console.log(error)
     res.status(500).json(error);
   }
 });
+
 // Delete a restaurant
 router.delete('/:restaurantId', async (req, res) => {
   try {
     const deletedRestaurant = await Restaurant.findByIdAndDelete(req.params.restaurantId);
+    console.log(deletedRestaurant)
       res.status(200).json({ message: 'Restaurant deleted successfully', deletedRestaurant });
   } catch (e) {
     res.status(500).json({ message: e.message });

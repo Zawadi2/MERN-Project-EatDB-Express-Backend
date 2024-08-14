@@ -1,57 +1,52 @@
 const express = require('express');
 const router = express.Router();
-const Food = require('../models/food');
+const Restaurant = require('../models/restaurant');
 
 // Create a new food
-router.post('/', async (req, res) => {
+router.post('/:restaurantId/foods', async (req, res) => {
   try {
-    const newFood = await Food.create(req.body);
-    res.status(201).json({ message: 'Food created successfully', newFood });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    console.log(restaurant)
+    restaurant.foodList.push(req.body);
+    await restaurant.save();
+
+    const newFood = restaurant.foodList[restaurant.foodList.length - 1];
+
+    res.status(201).json(newFood);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error);
   }
 });
+
 
 // Get all foods
-router.get('/', async (req, res) => {
+router.put('/:restaurantId/foods/:foodsId', async (req, res) => {
   try {
-    const foods = await Food.find();
-    res.status(200).json({ foods });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
-});
-
-
-// Get a single food by ID
-router.get('/:foodId', async (req, res) => {
-  try {
-    const food = await Food.findById(req.params.foodId);
-      res.status(404).json({ message: 'Food not found' });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
-});
-
-
-// Update a food
-router.put('/:foodId', async (req, res) => {
-  try {
-    const updatedFood = await Food.findByIdAndUpdate(req.params.foodId, req.body, { new: true });
-      res.status(200).json({ message: 'Food updated successfully', updatedFood });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    const food = restaurant.foodList.id(req.params.foodsId);
+    food.name = req.body.name; 
+    await restaurant.save();
+    res.status(200).json({ message: 'Ok' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
   }
 });
 
 
 // Delete a food
-router.delete('/:foodId', async (req, res) => {
+router.delete('/:restaurantId/foods/:foodsId', async (req, res) => {
   try {
-    const deletedFood = await Food.findByIdAndDelete(req.params.foodId);
-      res.status(200).json({ message: 'Food deleted successfully', deletedFood });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    restaurant.foodList.remove({ _id: req.params.foodsId });
+    await restaurant.save();
+    res.status(200).json({ message: 'Ok' });
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
+
+
+
 module.exports = router;
