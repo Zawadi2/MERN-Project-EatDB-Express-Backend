@@ -76,5 +76,21 @@ router.delete('/:restaurantId', async (req, res) => {
   }
 });
 
+router.post('/:restaurantId/foods', async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.restaurantId);
+    console.log(restaurant)
+    restaurant.foodList.push(req.body);
+    await restaurant.save();
+
+    const newFood = restaurant.foodList[restaurant.foodList.length - 1];
+
+    res.status(201).json(newFood);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error);
+  }
+});
+
 
 module.exports = router;

@@ -3,6 +3,7 @@ dotenv.config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const cors = require('cors')
 
 
 const signinJWTRouter = require('./controllers/signin-jwt');
@@ -18,13 +19,14 @@ mongoose.connection.on('connected', () => {
 });
 
 app.use(express.json());
+app.use(cors())
 
 // Routes go here
 app.use('/signin-jwt', signinJWTRouter);
 app.use('/users', userRouter)
 app.use('/profiles', profilesRouter);
 app.use('/restaurants', restaurantRouter);
-app.use('/foods', foodRouter);
+// app.use('/restaurants/:restaurantId/foods', foodRouter);
 
 
 

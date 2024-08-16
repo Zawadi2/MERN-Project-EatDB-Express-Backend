@@ -3,7 +3,7 @@ const router = express.Router();
 const Restaurant = require('../models/restaurant');
 
 // Create a new food
-router.post('/:restaurantId/foods', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.restaurantId);
     console.log(restaurant)
@@ -21,7 +21,7 @@ router.post('/:restaurantId/foods', async (req, res) => {
 
 
 // Get all foods
-router.put('/:restaurantId/foods/:foodsId', async (req, res) => {
+router.put('/:foodsId', async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.restaurantId);
     const food = restaurant.foodList.id(req.params.foodsId);
@@ -36,7 +36,7 @@ router.put('/:restaurantId/foods/:foodsId', async (req, res) => {
 
 
 // Delete a food
-router.delete('/:restaurantId/foods/:foodsId', async (req, res) => {
+router.delete('/:foodsId', async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.restaurantId);
     restaurant.foodList.remove({ _id: req.params.foodsId });
