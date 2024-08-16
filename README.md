@@ -1,1 +1,2 @@
 # EatDB-group-project
+This is the backend of EatDB, if you wish to read the main README, please visit the frontend GitHub repository [here](https://github.com/tnleibel/mern-project-eatdb-react-frontend).
