@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors')
 
+const PORT = process.env.PORT || 3000
 
 const signinJWTRouter = require('./controllers/signin-jwt');
 const userRouter = require('./controllers/users')
@@ -30,6 +31,6 @@ app.use('/restaurants', restaurantRouter);
 
 
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log('The express app is ready!');
 });
